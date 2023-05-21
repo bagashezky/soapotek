@@ -9,7 +9,7 @@ class Login extends CI_Controller {
     
 	function index(){
         if($this->session->userdata('logged') !=TRUE){
-            $this->load->view('view-login');
+            $this->load->view('loginpage/index');
         }else{
             $url=base_url('example');
             redirect($url);
