@@ -11,10 +11,10 @@
 		<div class="profile">
 		<a href="<?php echo base_url(); ?>" class="site_title"><span style="font-size: 20px;"><?php echo 'Apotek Milan' ?></span></a>
 		</div>
-
+		
 		
 		<div class="clearfix"></div>
-
+		
 		
 		<!-- /menu profile quick info -->
 		<br>
@@ -23,58 +23,110 @@
 			<div class="menu_section">
 				<h3></h3>
 				<ul class="nav side-menu">
-
+					<?php if($this->session->userdata('access')=='Administrator'){ ?>
 					<li><a href="<?php echo base_url('') ?>"><i class="fa fa-home"></i> Dashboard </a></li>
-					<li><a><i class="fa fa-medkit"></i> Obat <span class="fa fa-chevron-down"></span></a>
+						<li><a><i class="fa fa-medkit"></i> Obat <span class="fa fa-chevron-down"></span></a>
 						<ul class="nav child_menu">
 							<li><a href="<?php echo base_url('example/form_med') ?>">Tambah Obat</a></li>
 							<li><a href="<?php echo base_url('example/obats') ?>">Lihat Obat</a></li>
 							<li><a href="<?php echo base_url('example/table_exp') ?>">Obat Kadaluarsa</a></li>
 							<li><a href="<?php echo base_url('example/table_stock') ?>">Obat Habis</a></li>
-							
 						</ul>
-					</li>
-					<li><a><i class="fa fa-archive"></i> Penyimpanan <span class="fa fa-chevron-down"></span></a>
+						</li>
+						<li><a><i class="fa fa-archive"></i> Penyimpanan <span class="fa fa-chevron-down"></span></a>
 						<ul class="nav child_menu">
-							<li><a href="<?php echo base_url('example/form_penyimpanan') ?>">Tambah Penyimpanan</a></li>
-							<li><a href="<?php echo base_url('example/rak_penyimpanan') ?>">Lihat Penyimpanan</a></li>
-							
-						</ul>
-					</li>
-					<li><a><i class="fa fa-hospital-o"></i> Kategori & Jenis <span class="fa fa-chevron-down"></span></a>
+								<li><a href="<?php echo base_url('example/form_penyimpanan') ?>">Tambah Penyimpanan</a></li>
+								<li><a href="<?php echo base_url('example/rak_penyimpanan') ?>">Lihat Penyimpanan</a></li>
+								
+							</ul>
+						</li>
+						<li><a><i class="fa fa-hospital-o"></i> Kategori & Jenis <span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<li><a href="<?php echo base_url('example/form_cat') ?>">Tambah Kategori</a></li>
+								<li><a href="<?php echo base_url('example/kategori_obat') ?>">Lihat Kategori</a></li>
+								<li><a href="<?php echo base_url('example/form_unit') ?>">Tambah Jenis Obat</a></li>
+								<li><a href="<?php echo base_url('example/jenis_obat') ?>">Lihat Jenis Obat</a></li>
+								
+							</ul>
+						</li>
+						<li><a><i class="fa fa-users"></i> Supplier <span class="fa fa-chevron-down"></span></a>
 						<ul class="nav child_menu">
-							<li><a href="<?php echo base_url('example/form_cat') ?>">Tambah Kategori</a></li>
-							<li><a href="<?php echo base_url('example/kategori_obat') ?>">Lihat Kategori</a></li>
-							<li><a href="<?php echo base_url('example/form_unit') ?>">Tambah Jenis Obat</a></li>
-							<li><a href="<?php echo base_url('example/jenis_obat') ?>">Lihat Jenis Obat</a></li>
+							<li><a href="<?php echo base_url('example/form_sup') ?>">Tambah Supplier</a></li>
+							<li><a href="<?php echo base_url('example/supplier') ?>">Lihat Supplier</a></li>
+						</ul>
+						</li>
+					  <li><a><i class="fa fa-shopping-cart"></i> Pembelian <span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<li><a href="<?php echo base_url('example/form_purchase') ?>">Tambah Pembelian</a></li>
+								<li><a href="<?php echo base_url('example/pembelian') ?>">Lihat Pembelian</a></li>
+								<li><a href="<?php echo base_url('example/purchase_report') ?>">Grafik Pembelian</a></li>
+								
+								
+							</ul>
+						</li>
+						<li><a href="<?php echo base_url('example/report') ?>"><i class="fa fa-bar-chart"></i> Laporan </a>
+					</li>
+				</li>
+				
+				<!-- Apoteker -->
+				<?php } if($this->session->userdata('access')=='Apoteker'){ ?>
+					<li><a><i class="fa fa-medkit"></i> Obat <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu">
+						<li><a href="<?php echo base_url('example/form_med') ?>">Tambah Obat</a></li>
+						<li><a href="<?php echo base_url('example/obats') ?>">Lihat Obat</a></li>
+						<li><a href="<?php echo base_url('example/table_exp') ?>">Obat Kadaluarsa</a></li>
+						<li><a href="<?php echo base_url('example/table_stock') ?>">Obat Habis</a></li>
+					</ul>
+				</li>
+				<li><a><i class="fa fa-hospital-o"></i> Kategori & Jenis <span class="fa fa-chevron-down"></span></a>
+				<ul class="nav child_menu">
+					<li><a href="<?php echo base_url('example/form_cat') ?>">Tambah Kategori</a></li>
+					<li><a href="<?php echo base_url('example/kategori_obat') ?>">Lihat Kategori</a></li>
+					<li><a href="<?php echo base_url('example/form_unit') ?>">Tambah Jenis Obat</a></li>
+					<li><a href="<?php echo base_url('example/jenis_obat') ?>">Lihat Jenis Obat</a></li>
+					
+				</ul>
+				</li>
+			<li><a><i class="fa fa-archive"></i> Penyimpanan <span class="fa fa-chevron-down"></span></a>
+			<ul class="nav child_menu">
+				<li><a href="<?php echo base_url('example/form_penyimpanan') ?>">Tambah Penyimpanan</a></li>
+				<li><a href="<?php echo base_url('example/rak_penyimpanan') ?>">Lihat Penyimpanan</a></li>
 							
 						</ul>
 					</li>
+					
 
+					<?php  } if($this->session->userdata('access')=='Pegawai'){ ?>
+						<li><a><i class="fa fa-medkit"></i> Obat <span class="fa fa-chevron-down"></span></a>
+						<ul class="nav child_menu">
+							<li><a href="<?php echo base_url('example/form_med') ?>">Tambah Obat</a></li>
+							<li><a href="<?php echo base_url('example/obats') ?>">Lihat Obat</a></li>
+							<li><a href="<?php echo base_url('example/table_exp') ?>">Obat Kadaluarsa</a></li>
+							<li><a href="<?php echo base_url('example/table_stock') ?>">Obat Habis</a></li>
+						</ul>
+					</li>
 					<li><a><i class="fa fa-users"></i> Supplier <span class="fa fa-chevron-down"></span></a>
 						<ul class="nav child_menu">
 							<li><a href="<?php echo base_url('example/form_sup') ?>">Tambah Supplier</a></li>
                     		<li><a href="<?php echo base_url('example/supplier') ?>">Lihat Supplier</a></li>
 						</ul>
 					</li>
-
-				
-
-
-                  <li><a><i class="fa fa-shopping-cart"></i> Pembelian <span class="fa fa-chevron-down"></span></a>
-						<ul class="nav child_menu">
-							<li><a href="<?php echo base_url('example/form_purchase') ?>">Tambah Pembelian</a></li>
-							<li><a href="<?php echo base_url('example/pembelian') ?>">Lihat Pembelian</a></li>
+					<li><a><i class="fa fa-shopping-cart"></i> Pembelian <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu">
+						<li><a href="<?php echo base_url('example/form_purchase') ?>">Tambah Pembelian</a></li>
+						<li><a href="<?php echo base_url('example/pembelian') ?>">Lihat Pembelian</a></li>
 							<li><a href="<?php echo base_url('example/purchase_report') ?>">Grafik Pembelian</a></li>
 							
 							
 						</ul>
 					</li>
 
+					<?php } if($this->session->userdata('access')=='Pemilik'){ ?>
+						<li><a href="<?php echo base_url('example/report') ?>"><i class="fa fa-bar-chart"></i> Laporan </a></li>
+						<?php }; ?>
 
-					<li><a href="<?php echo base_url('example/report') ?>"><i class="fa fa-bar-chart"></i> Laporan </a></li>
 
-				</ul>
+					</ul>
 			</div>
 		</div>
 		

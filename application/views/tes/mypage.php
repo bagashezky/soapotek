@@ -68,7 +68,7 @@
 								
 
                 <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <a href="<?php echo base_url('example/supplier') ?>">
+                  <!-- <a href="<?php echo base_url('example/supplier') ?>"> -->
                   <div class="tile-stats" style="border-radius: 15px;">
                     <div class="icon">
                     </div>
@@ -80,7 +80,7 @@
 
 
                 <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <a href="<?php echo base_url('example/obats') ?>">
+                  <!-- <a href="<?php echo base_url('example/obats') ?>"> -->
                   <div class="tile-stats" style="border-radius: 15px;">
                     <div class="icon">
                     </div>
@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <a href="<?php echo base_url('example/table_exp') ?>">
+                <!-- <a href="<?php echo base_url('example/table_exp') ?>"> -->
                 <div class="tile-stats" style="border-radius: 15px;">
                   <div class="icon">
                     </div>
