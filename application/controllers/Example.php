@@ -81,7 +81,14 @@ class Example extends CI_Controller
 
 		$this->template->render();
 	}
+	
+	function form_coa() {
+		$this->template->write('title', 'Tambah Coa', TRUE);
+		$this->template->write('header', 'Dashboard');
+		$this->template->write_view('content', 'tes/form_coa','', true);
 
+		$this->template->render();
+	}
 	function form_unit() {
 		$this->template->write('title', 'Tambah Jenis', TRUE);
 		$this->template->write('header', 'Dashboard');
@@ -116,6 +123,15 @@ class Example extends CI_Controller
 		$this->template->write('title', 'Lihat Obat', TRUE);
 		$this->template->write('header', 'Dashboard');
 		$this->template->write_view('content', 'tes/obats', $data, true);
+
+		$this->template->render();
+	}
+	function coa() {
+		
+		$data['coa'] = $this->apotek_data->coa()->result();
+		$this->template->write('title', 'Lihat Obat', TRUE);
+		$this->template->write('header', 'Dashboard');
+		$this->template->write_view('content', 'tes/coa', $data, true);
 
 		$this->template->render();
 	}
@@ -326,6 +342,35 @@ class Example extends CI_Controller
 
 
 	}
+	function add_coa()
+	{
+		$kode_coa = $this->input->post('kode_coa');
+
+// Memeriksa apakah nama obat sudah ada di database
+		$this->load->model('apotek_data');
+		if ($this->apotek_data->get_coa_by_nama($kode_coa)) {
+			$this->session->set_flashdata('coa_eror', 'Kode Coa sudah ada');
+			redirect('example/coa');
+		} else {
+			$nama_coa = $this->input->post('nama_coa');
+			$header_akun = $this->input->post('header_akun');
+			$posisi_db_cr = $this->input->post('posisi_db_cr');
+
+			$data = array(
+				'kode_coa' => $kode_coa,
+				'nama_coa' => $nama_coa,
+				'header_akun' => $header_akun,
+				'posisi_db_cr' => $posisi_db_cr,
+			);
+
+			$this->apotek_data->insert_data($data, 'coa');
+
+			$this->session->set_flashdata('coa_added', 'COA berhasil ditambahkan');
+			redirect('example/coa');
+		}
+
+
+	}
 
 
 	function add_category(){
@@ -522,7 +567,16 @@ class Example extends CI_Controller
 
 		$this->template->render();
 	}
+	
+	function edit_form_coa($kode_coa) {
+		$where = array('kode_coa' => $kode_coa);
+		$data['coa'] = $this->apotek_data->edit_data($where,'coa')->result();
+		$this->template->write('title', 'Ubah COA', TRUE);
+		$this->template->write('header', 'Dashboard');
+		$this->template->write_view('content', 'tes/edit_form_coa', $data, true);
 
+		$this->template->render();
+	}
 	function update_category(){
 		$id_kategori_obat = $this->input->post('id_kategori_obat');
 		$nama_kategori = $this->input->post('nama_kategori');
@@ -544,7 +598,29 @@ class Example extends CI_Controller
 		$this->session->set_flashdata('cat_added', 'Data kategori berhasil diperbarui');
 		redirect('example/kategori_obat');
 	}
+	
+	function update_coa(){
+		$kode_coa = $this->input->post('kode_coa');
+		$nama_coa = $this->input->post('nama_coa');
+		$header_akun = $this->input->post('header_akun');
+		$posisi_db_cr = $this->input->post('posisi_db_cr');
 
+		$data = array(
+			'kode_coa' => $kode_coa,
+			'nama_coa' => $nama_coa,
+			'header_akun' => $header_akun,
+			'posisi_db_cr' => $posisi_db_cr,
+		);
+
+		$where = array(
+			'kode_coa' => $kode_coa
+		);
+
+		$this->apotek_data->update_data($where,$data,'coa');
+
+		$this->session->set_flashdata('coa_added', 'Data COA berhasil diperbarui');
+		redirect('example/coa');
+	}
 	function edit_form_med($id_obat) {
 		$data['get_cat'] = $this->apotek_data->get_category();
 		$data['get_sup'] = $this->apotek_data->get_supplier();
@@ -689,7 +765,7 @@ class Example extends CI_Controller
 		$unit = $this->input->post('unit');
 		
 		$data = array(
-			'nama_rak_penyimpanan' => $nama_rak_penyimpanan,
+			'unit' => $unit,
 		
 		);
 
@@ -713,6 +789,11 @@ class Example extends CI_Controller
 		$where = array('id_kategori_obat' => $id_kategori_obat);
 		$this->apotek_data->delete_data($where,'kategori_obat');
 		redirect('example/kategori_obat');
+	}
+	function remove_coa($kode_coa){
+		$where = array('kode_coa' => $kode_coa);
+		$this->apotek_data->delete_data($where,'coa');
+		redirect('example/coa');
 	}
 
 	function remove_sup($id_supplier){

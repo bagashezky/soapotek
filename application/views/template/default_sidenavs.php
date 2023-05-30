@@ -64,6 +64,13 @@
 								
 							</ul>
 						</li>
+					  <li><a><i class="fa fa-circle-o"></i> COA <span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<li><a href="<?php echo base_url('example/form_coa') ?>">Tambah Coa</a></li>
+								<li><a href="<?php echo base_url('example/coa') ?>">Lihat Coa</a></li>
+								
+							</ul>
+						</li>
 						<li><a href="<?php echo base_url('example/report') ?>"><i class="fa fa-bar-chart"></i> Laporan </a>
 					</li>
 				</li>
@@ -120,6 +127,13 @@
 							
 						</ul>
 					</li>
+					<li><a><i class="fa fa-circle-o"></i> COA <span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<li><a href="<?php echo base_url('example/form_coa') ?>">Tambah Coa</a></li>
+								<li><a href="<?php echo base_url('example/coa') ?>">Lihat Coa</a></li>
+								
+							</ul>
+						</li>
 
 					<?php } if($this->session->userdata('access')=='Pemilik'){ ?>
 						<li><a href="<?php echo base_url('example/report') ?>"><i class="fa fa-bar-chart"></i> Laporan </a></li>

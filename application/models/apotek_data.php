@@ -15,6 +15,10 @@ class Apotek_data extends CI_Model
     {
         return $this->db->get('obats');
     }
+	function coa()
+    {
+        return $this->db->get('coa');
+    }
 
     function category()
     {
@@ -150,6 +154,12 @@ class Apotek_data extends CI_Model
 		return $query->row();
 	}
 	
+	function get_coa_by_nama($kode_coa)
+	{
+		$this->db->where('kode_coa', $kode_coa);
+		$query = $this->db->get('coa');
+		return $query->row();
+	}
 	function get_rak_by_nama($nama_rak_penyimpanan)
 	{
 		$this->db->where('nama_rak_penyimpanan', $nama_rak_penyimpanan);
