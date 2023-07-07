@@ -11,6 +11,7 @@ class Example extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('apotek_data');
+		$this->load->model('Jurnal_model');
         $this->load->database();
         $this->load->helper(array('form', 'url'));
        
@@ -89,6 +90,13 @@ class Example extends CI_Controller
 
 		$this->template->render();
 	}
+	function form_dataakun() {
+		$this->template->write('title', 'Tambah Akun', TRUE);
+		$this->template->write('header', 'Dashboard');
+		$this->template->write_view('content', 'tes/form_dataakun','', true);
+
+		$this->template->render();
+	}
 	function form_unit() {
 		$this->template->write('title', 'Tambah Jenis', TRUE);
 		$this->template->write('header', 'Dashboard');
@@ -133,6 +141,23 @@ class Example extends CI_Controller
 		$this->template->write('header', 'Dashboard');
 		$this->template->write_view('content', 'tes/coa', $data, true);
 
+		$this->template->render();
+	}
+	function dataakun() {
+		
+		$data['dataakun'] = $this->apotek_data->dataakun()->result();
+		$this->template->write('title', 'Lihat Obat', TRUE);
+		$this->template->write('header', 'Dashboard');
+		$this->template->write_view('content', 'tes/dataakun', $data, true);
+		
+		$this->template->render();
+	}
+	function jurnal_umum() {
+		$data['jurnal_umum'] = $this->apotek_data->jurnal_umum()->result();
+		$data['get_akunjurnal'] = $this->apotek_data->get_akunjurnal();
+		$this->template->write('title', 'Lihat Jenis', TRUE);
+		$this->template->write('header', 'Dashboard');
+		$this->template->write_view('content', 'tes/jurnal_umum', $data, true);
 		$this->template->render();
 	}
 
@@ -233,7 +258,18 @@ class Example extends CI_Controller
 
 		$this->template->render();
 	}
+	
+	function form_jurnalumum() {
+		$data['tbl_jurnal_umum'] = $this->apotek_data->jurnal_umum()->result();
+		$data['get_coa'] = $this->apotek_data->get_coa();
+		$data['get_med'] = $this->apotek_data->get_medicine();
+		$data['get_unit'] = $this->apotek_data->get_unit();
+		$this->template->write('title', 'Tambah Penjualan', TRUE);
+		$this->template->write('header', 'Dashboard');
+		$this->template->write_view('content', 'tes/form_jurnalumum', $data, true);
 
+		$this->template->render();
+	}
 
 	function form_purchase() {
 		$data['obats'] = $this->apotek_data->medicine()->result();
@@ -298,19 +334,57 @@ class Example extends CI_Controller
 
 		$this->template->render();
 	}
+	public function save_ju_tunai() {
+		$where	= date('Y-m-d');
+		$cek 	= $this->apotek_data->cek_ju($where,'tbl_jurnal_umum')->num_rows();
+		if($cek==0) { 
+		$ju 	= array(
+			'tanggal' 		=>	date('Y-m-d'),
+			'nama_perkiraan'=> 	'Pembelian',
+			'debet' 		=>	$this->get_total(),
+			'kredit'		=>	0,
+			'keterangan'	=> 'Tunai'
+		);
+		$this->db->insert('tbl_jurnal_umum',$ju);
+
+		$ju = array(
+			'tanggal' 		=>	date('Y-m-d'),
+			'nama_perkiraan'=> 	'Kas',
+			'kredit' 		=>	$this->get_total(),
+			'debet'			=>	0,
+			'keterangan' 	=> 	'Pembelian'
+		 );
+		$this->db->insert('tbl_jurnal_umum',$ju);
+	} else {
+		//UPDATE FOR KAS KREDIT
+		$where = array(
+			'keterangan' 	=> 'Pembelian',
+			'nama_perkiraan'=> 'Kas'
+		);
+		$this->db->set('kredit','kredit+'.$this->get_total(),FALSE);
+		$this->db->where($where);
+		$this->db->update('tbl_jurnal_umum');
+
+		//UPDATE FOR PEMBELIAN DEBET
+		$this->db->set('debet','debet+'.$this->get_total(),FALSE);
+		$this->db->where('nama_perkiraan','Pembelian');
+		$this->db->where('keterangan','Tunai');
+		$this->db->update('tbl_jurnal_umum');
+	}
+	} 
+	public function get_total() {
+		$this->db->select_sum('subtotal');
+		$this->db->from('pembelian');
+		$query = $this->db->get();
+		return $query->row()->subtotal;
+	}
 
 
 
 	function add_medicine()
 	{
 		$nama_obat = $this->input->post('nama_obat');
-
-// Memeriksa apakah nama obat sudah ada di database
-		$this->load->model('apotek_data');
-		if ($this->apotek_data->get_obat_by_nama($nama_obat)) {
-			$this->session->set_flashdata('med_ada', 'Data obat sudah ada');
-			redirect('example/obats');
-		} else {
+			$ref = generateRandomString();
 			$jmlh_stok = $this->input->post('jmlh_stok');
 			$unit = $this->input->post('unit');
 			$nama_kategori = $this->input->post('nama_kategori');
@@ -322,6 +396,8 @@ class Example extends CI_Controller
 			$nama_supplier = $this->input->post('nama_supplier');
 
 			$data = array(
+
+				'kode_obat' => $ref,
 				'nama_obat' => $nama_obat,
 				'jmlh_stok' => $jmlh_stok,
 				'unit' => $unit,
@@ -335,10 +411,12 @@ class Example extends CI_Controller
 			);
 
 			$this->apotek_data->insert_data($data, 'obats');
+			
 
 			$this->session->set_flashdata('med_added', 'Obat berhasil ditambahkan');
 			redirect('example/obats');
-		}
+			
+		
 
 
 	}
@@ -367,6 +445,125 @@ class Example extends CI_Controller
 
 			$this->session->set_flashdata('coa_added', 'COA berhasil ditambahkan');
 			redirect('example/coa');
+		}
+	}
+
+	public function get_akun() {
+		$get = $this->input->post('coa',TRUE);
+		$this->db->select('*');
+		$this->db->from('coa');
+		$this->db->where('kode_coa',$get);
+		$query = $this->db->get();
+		return $query;
+	}
+	function add_jurnalumum()
+	{
+		$trans 	= $this->get_akun()->row()->kode_coa;
+ 		if($trans==111) { // Kas
+
+ 		$data = array(
+			'tanggal' 		=>	date('Y-m-d',strtotime($this->input->post('tanggal',TRUE))),
+			'nama_perkiraan'=> 	'Kas',
+			'debet' 		=>	str_replace('.','',$this->input->post('biaya',TRUE)),
+			'kredit'		=>	0
+		);
+		$this->db->insert('tbl_jurnal_umum',$data);
+
+		$data = array(
+			'tanggal' 		=>	date('Y-m-d',strtotime($this->input->post('tanggal',TRUE))),
+			'nama_perkiraan'=> 	'Kas',
+			'kredit' 		=>	str_replace('.','',$this->input->post('biaya',TRUE)),
+			'debet'			=>	0
+		 );
+		$this->db->insert('tbl_jurnal_umum',$data);
+
+ 		} elseif ($this->input->post('akun',TRUE) == 'kas') { // Biaya Penyusutan Kendaraan
+		$data = array(
+			'tanggal' 		=>	date('Y-m-d',strtotime($this->input->post('tanggal',TRUE))),
+			'nama_perkiraan'=> 	'Persediaan Barang',
+			'kredit' 		=>	str_replace('.','',$this->input->post('biaya',TRUE)),
+			'debet'		=>	0,
+		);
+		$this->db->insert('tbl_jurnal_umum',$data);
+
+		$data = array(
+			'tanggal' 		=>	date('Y-m-d',strtotime($this->input->post('tanggal',TRUE))),
+			'nama_perkiraan'=> 	'Kas',
+			'debet' 		=>	str_replace('.','',$this->input->post('biaya',TRUE)),
+			'kredit'			=>	0,
+		);
+		$this->db->insert('tbl_jurnal_umum',$data);
+		} elseif ($this->input->post('akun',TRUE) == 'persediaanbarang') {
+			$data = array(
+			'tanggal' 		=>	date('Y-m-d',strtotime($this->input->post('tanggal',TRUE))),
+			'nama_perkiraan'=> 	'Kas',
+			'kredit' 		=>	str_replace('.','',$this->input->post('biaya',TRUE)),
+			'debet'		=>	0,
+		);
+		$this->db->insert('tbl_jurnal_umum',$data);
+
+		$data = array(
+			'tanggal' 		=>	date('Y-m-d',strtotime($this->input->post('tanggal',TRUE))),
+			'nama_perkiraan'=> 	'Persediaan Barang',
+			'debet'		=>	str_replace('.','',$this->input->post('biaya',TRUE)),
+			'kredit' 		=>	0,
+		);
+		$this->session->set_flashdata('cat_ada', 'COA berhasil ditambahkan');
+		$this->db->insert('tbl_jurnal_umum',$data);
+		}
+		redirect('example/jurnal_umum');
+	}
+	
+	function add_jurnalumumdetail()
+	{
+
+		$content = 'tes/jurnal_umum';
+        $titleTag = 'Jurnal Umum';
+		$bulan = $this->input->post('bulan',true);
+        $tahun = $this->input->post('tahun',true);
+        $jurnals = null;
+
+        if(empty($bulan) || empty($tahun)){
+            redirect('jurnal_umum');
+        }
+
+        $jurnals = $this->jurnal->getJurnalJoinAkunDetail($bulan,$tahun);
+        $totalDebit = $this->jurnal->getTotalSaldoDetail('debit',$bulan,$tahun);
+        $totalKredit = $this->jurnal->getTotalSaldoDetail('kredit',$bulan,$tahun);
+
+        if($jurnals==null){
+            $this->session->set_flashdata('dataNull','Data Jurnal Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
+            redirect('example/jurnal_umum');
+        }
+
+		$this->load->view('template',compact('content','jurnals','totalDebit','totalKredit','titleTag'));
+
+	}
+	function add_dataakun()
+	{
+		$no_reff = $this->input->post('no_reff');
+
+// Memeriksa apakah nama obat sudah ada di database
+		$this->load->model('apotek_data');
+		if ($this->apotek_data->get_akun_by_nama($no_reff)) {
+			$this->session->set_flashdata('coa_eror', 'Kode Coa sudah ada');
+			redirect('example/dataakun');
+		} else {
+			$id_user = $this->input->post('id_user');
+			$nama_reff = $this->input->post('nama_reff');
+			$keterangan = $this->input->post('keterangan');
+
+			$data = array(
+				'no_reff' => $no_reff,
+				'id_user' => $id_user,
+				'nama_reff' => $nama_reff,
+				'keterangan' => $keterangan,
+			);
+
+			$this->apotek_data->insert_data($data, 'akun');
+
+			$this->session->set_flashdata('coa_added', 'COA berhasil ditambahkan');
+			redirect('example/dataakun');
 		}
 
 
@@ -527,6 +724,7 @@ class Example extends CI_Controller
 		}
 		
 		$this->db->insert_batch('pembelian', $data);
+		$this->save_ju_tunai();
 		$this->session->set_flashdata('pur_added', 'Pembelian berhasil ditambahkan');
 		redirect('example/pembelian');
 		
@@ -577,6 +775,15 @@ class Example extends CI_Controller
 
 		$this->template->render();
 	}
+	function edit_form_dataakun($no_reff) {
+		$where = array('no_reff' => $no_reff);
+		$data['akun'] = $this->apotek_data->edit_data($where,'akun')->result();
+		$this->template->write('title', 'Ubah COA', TRUE);
+		$this->template->write('header', 'Dashboard');
+		$this->template->write_view('content', 'tes/edit_form_dataakun', $data, true);
+
+		$this->template->render();
+	}
 	function update_category(){
 		$id_kategori_obat = $this->input->post('id_kategori_obat');
 		$nama_kategori = $this->input->post('nama_kategori');
@@ -620,6 +827,26 @@ class Example extends CI_Controller
 
 		$this->session->set_flashdata('coa_added', 'Data COA berhasil diperbarui');
 		redirect('example/coa');
+	}
+	function update_akun(){
+		$no_reff = $this->input->post('no_reff');
+		$nama_reff = $this->input->post('nama_reff');
+		$keterangan = $this->input->post('keterangan');
+
+		$data = array(
+			'no_reff' => $no_reff,
+			'nama_reff' => $nama_reff,
+			'keterangan' => $keterangan,
+		);
+
+		$where = array(
+			'no_reff' => $no_reff
+		);
+
+		$this->apotek_data->update_data($where,$data,'akun');
+
+		$this->session->set_flashdata('coa_added', 'Data COA berhasil diperbarui');
+		redirect('example/dataakun');
 	}
 	function edit_form_med($id_obat) {
 		$data['get_cat'] = $this->apotek_data->get_category();
@@ -794,6 +1021,11 @@ class Example extends CI_Controller
 		$where = array('kode_coa' => $kode_coa);
 		$this->apotek_data->delete_data($where,'coa');
 		redirect('example/coa');
+	}
+	function remove_akun($no_reff){
+		$where = array('no_reff' => $no_reff);
+		$this->apotek_data->delete_data($where,'akun');
+		redirect('example/dataakun');
 	}
 
 	function remove_sup($id_supplier){

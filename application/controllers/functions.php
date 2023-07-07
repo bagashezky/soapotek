@@ -28,4 +28,17 @@ function generateRandomString($length = 10) {
 
     return $token;
 }
+function generateRandomStringObat($length = 10) {
+    $token = "OB";
+    // $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    // $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+    $codeAlphabet.= "123456789";
+    $max = strlen($codeAlphabet); // edited
+
+    for ($i=0; $i < $length; $i++) {
+        $token .= $codeAlphabet[crypto_rand_secure(0, $max-1)];
+    }
+
+    return $token;
+}
 

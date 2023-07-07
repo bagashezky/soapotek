@@ -19,6 +19,19 @@ class Apotek_data extends CI_Model
     {
         return $this->db->get('coa');
     }
+	function dataakun()
+    {
+        return $this->db->get('akun');
+    }
+	function transaksi()
+    {
+        return $this->db->get('transaksi');
+    }
+	
+	function jurnal_umum()
+    {
+        return $this->db->get('tbl_jurnal_umum');
+    }
 
     function category()
     {
@@ -38,6 +51,24 @@ class Apotek_data extends CI_Model
     {
         return $this->db->get('rak_penyimpanan');
     }
+    function cek_ju($where) {
+		$this->db->select('*');
+		$this->db->from('tbl_jurnal_umum');
+		$this->db->where('tanggal',$where);
+		$this->db->where('nama_perkiraan','Pembelian');
+		$this->db->where('keterangan','Tunai');
+		$query = $this->db->get();
+		return $query;
+	}
+
+    function tampil_ju() {
+		$this->db->select('*');
+		$this->db->from('tbl_jurnal_umum');
+		$this->db->where('date_format(tanggal,"%m")',date('m'));
+		$this->db->where('date_format(tanggal,"%Y")',date('Y'));
+		$this->db->order_by('no','ASC');
+		return $this->db->get();
+	}
 
     function invoice()
     {
@@ -81,6 +112,21 @@ class Apotek_data extends CI_Model
         asort($data);
         return $data;
     }  
+    function get_coa()
+    {
+        $data = array();
+        $query = $this->db->get('coa')->result_array();
+
+        if( is_array($query) && count ($query) > 0 )
+        {
+        foreach ($query as $row ) 
+        {
+          $data[$row['nama_coa']] = $row['nama_coa'];
+        }
+        }
+        asort($data);
+        return $data;
+    }  
 	
     function get_categoryrak()
     {
@@ -97,6 +143,40 @@ class Apotek_data extends CI_Model
         asort($data);
         return $data;
     }  
+    function get_akunjurnal()
+        {
+            $data = array();
+            $query = $this->db->get('akun')->result_array();
+
+            if (is_array($query) && count($query) > 0) {
+                foreach ($query as $row) {
+                    if ($row['no_reff'] == '112') {
+                        $data[$row['nama_reff']] = 'Persediaan Barang';
+                    } elseif ($row['no_reff'] == '111') {
+                        $data[$row['nama_reff']] = 'Kas';
+                    } else {
+                        $data[$row['nama_reff']] = $row['nama_reff'];
+                    }
+                }
+            }
+            
+            asort($data);
+            return $data;
+        }
+    function getTotalDebit()
+        {
+        $data = array(); // Menambahkan inisialisasi $data sebagai array
+
+        $query = $this->db->select_sum('saldo')
+                          ->from('transaksi')
+                          ->where('jenis_saldo', 'debit')
+                          ->get();
+
+        $data['totalDebit'] = $query->row()->saldo;
+
+        return $data;
+        }
+
     function get_supplier()
     {
         $data = array();
@@ -158,6 +238,12 @@ class Apotek_data extends CI_Model
 	{
 		$this->db->where('kode_coa', $kode_coa);
 		$query = $this->db->get('coa');
+		return $query->row();
+	}
+	function get_akun_by_nama($no_reff)
+	{
+		$this->db->where('no_reff', $no_reff);
+		$query = $this->db->get('akun');
 		return $query->row();
 	}
 	function get_rak_by_nama($nama_rak_penyimpanan)

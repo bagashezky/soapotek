@@ -59,5 +59,7 @@ $route['form_ex'] = 'example/form_ex';
 $route['table_ex'] = 'example/table_ex';
 $route['table_dyn_ex'] = 'example/table_dyn_ex';
 
+$route['jurnal_umum/detail'] = 'user/jurnalUmumDetail';
+
 
 

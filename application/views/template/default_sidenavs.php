@@ -64,10 +64,19 @@
 								
 							</ul>
 						</li>
-					  <li><a><i class="fa fa-circle-o"></i> COA <span class="fa fa-chevron-down"></span></a>
+					  <!-- <li><a><i class="fa fa-circle-o"></i> COA <span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
 								<li><a href="<?php echo base_url('example/form_coa') ?>">Tambah Coa</a></li>
 								<li><a href="<?php echo base_url('example/coa') ?>">Lihat Coa</a></li>
+								
+							</ul>
+						</li> -->
+					  <li><a><i class="fa fa-circle-o"></i> Laporan Lengkap<span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<li><a href="<?php echo base_url('example/dataakun') ?>">Data Akun</a></li>
+								<li><a href="<?php echo base_url('example/jurnal_umum') ?>">Jurnal Umum</a></li>
+								<li><a href="<?php echo base_url('example/bukubesar') ?>">Buku Besar</a></li>
+								<li><a href="<?php echo base_url('example/kartustok') ?>">Kartu Stok</a></li>
 								
 							</ul>
 						</li>
